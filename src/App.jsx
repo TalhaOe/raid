@@ -337,15 +337,82 @@ function DecisionDiagram() {
 
 function MiniQuiz() {
   const questions = [
-    { q: "Du willst maximale Geschwindigkeit und die Daten sind egal. Was passt?", a: "RAID 0", options: ["RAID 0", "RAID 1", "RAID 6"] },
-    { q: "Du willst wichtige Fotos schützen und hast zwei Platten. Was passt?", a: "RAID 1", options: ["RAID 0", "RAID 1", "RAID 3"] },
-    { q: "Du willst für Server Performance + Sicherheit. Was ist oft ideal?", a: "RAID 10", options: ["RAID 7", "RAID 10", "RAID 0"] },
+    { q: "Welches RAID bietet maximale Geschwindigkeit ohne Redundanz?", a: "RAID 0", options: ["RAID 0", "RAID 1", "RAID 5", "RAID 6"] },
+    { q: "Welches RAID spiegelt Daten auf mehrere Festplatten?", a: "RAID 1", options: ["RAID 0", "RAID 1", "RAID 3", "RAID 5"] },
+    { q: "Welches RAID kann den Ausfall von zwei Festplatten verkraften?", a: "RAID 6", options: ["RAID 0", "RAID 5", "RAID 6", "RAID 10"] },
+    { q: "Welches RAID verwendet verteilte Parität?", a: "RAID 5", options: ["RAID 1", "RAID 2", "RAID 5", "RAID 10"] },
+    { q: "Welches RAID wird häufig für Datenbanken und Server genutzt?", a: "RAID 10", options: ["RAID 7", "RAID 10", "RAID 0", "RAID 3"] },
+    { q: "Was bedeutet Mirroring?", a: "Daten werden gespiegelt", options: ["Daten werden gelöscht", "Daten werden gespiegelt", "Daten werden verschlüsselt", "Daten werden komprimiert"] },
+    { q: "Warum ist RAID 0 riskant?", a: "Ein Ausfall zerstört das gesamte Array", options: ["Es ist langsam", "Es braucht Internet", "Ein Ausfall zerstört das gesamte Array", "Es funktioniert nur mit SSDs"] },
+    { q: "Was ist ein Vorteil von Software RAID?", a: "Kein spezieller RAID-Controller nötig", options: ["Kein Betriebssystem nötig", "Immer schneller", "Kein spezieller RAID-Controller nötig", "Nur für HDDs geeignet"] },
+    { q: "Warum gilt RAID 10 als sehr beliebt?", a: "Es kombiniert Geschwindigkeit und Sicherheit", options: ["Es braucht nur eine Festplatte", "Es kombiniert Geschwindigkeit und Sicherheit", "Es hat keine Spiegelung", "Es braucht keinen Strom"] },
+    { q: "Ersetzt RAID ein Backup?", a: "Nein", options: ["Ja", "Nein", "Nur bei SSDs", "Nur bei RAID 1"] },
   ];
+
   const [answers, setAnswers] = useState({});
-  return <motion.section initial={{ opacity: 0, y: 35 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="rounded-3xl bg-slate-950 p-8 text-white shadow-xl ring-1 ring-cyan-300/20">
-    <div className="flex items-center gap-3"><HelpCircle className="h-7 w-7 text-cyan-300" /><h2 className="text-3xl font-black">Mini-Quiz fürs Referat</h2></div>
-    <div className="mt-6 space-y-5">{questions.map((q,i)=><div key={q.q} className="rounded-2xl bg-white/10 p-5 ring-1 ring-white/10"><div className="font-bold">{i+1}. {q.q}</div><div className="mt-3 flex flex-wrap gap-2">{q.options.map(o=>{const chosen=answers[i]===o; const correct=chosen && o===q.a; const wrong=chosen && o!==q.a; return <button key={o} onClick={()=>setAnswers({...answers,[i]:o})} className={`rounded-xl px-4 py-2 text-sm font-black transition hover:scale-105 ${correct ? "bg-emerald-400 text-slate-950" : wrong ? "bg-red-400 text-slate-950" : "bg-white/10 text-white ring-1 ring-white/15"}`}>{o}</button>})}</div>{answers[i] && <div className={`mt-3 text-sm font-bold ${answers[i]===q.a ? "text-emerald-300" : "text-red-300"}`}>{answers[i]===q.a ? "Richtig!" : `Nicht ganz — richtig wäre ${q.a}.`}</div>}</div>)}</div>
-  </motion.section>;
+
+  return (
+    <motion.section
+      initial={{ opacity: 0, y: 35 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      className="rounded-3xl bg-slate-950 p-8 text-white shadow-xl ring-1 ring-cyan-300/20"
+    >
+      <div className="flex items-center gap-3">
+        <HelpCircle className="h-7 w-7 text-cyan-300" />
+        <h2 className="text-3xl font-black">Mini-Quiz fürs Referat</h2>
+      </div>
+
+      <div className="mt-6 space-y-5">
+        {questions.map((q, i) => (
+          <div
+            key={q.q}
+            className="rounded-2xl bg-white/10 p-5 ring-1 ring-white/10"
+          >
+            <div className="font-bold">
+              {i + 1}. {q.q}
+            </div>
+
+            <div className="mt-3 flex flex-wrap gap-2">
+              {q.options.map((o) => {
+                const chosen = answers[i] === o;
+                const correct = chosen && o === q.a;
+                const wrong = chosen && o !== q.a;
+
+                return (
+                  <button
+                    key={o}
+                    onClick={() => setAnswers({ ...answers, [i]: o })}
+                    className={`rounded-xl px-4 py-2 text-sm font-black transition hover:scale-105 ${
+                      correct
+                        ? "bg-emerald-400 text-slate-950"
+                        : wrong
+                          ? "bg-red-400 text-slate-950"
+                          : "bg-white/10 text-white ring-1 ring-white/15"
+                    }`}
+                  >
+                    {o}
+                  </button>
+                );
+              })}
+            </div>
+
+            {answers[i] && (
+              <div
+                className={`mt-3 text-sm font-bold ${
+                  answers[i] === q.a ? "text-emerald-300" : "text-red-300"
+                }`}
+              >
+                {answers[i] === q.a
+                  ? "Richtig!"
+                  : `Nicht ganz — richtig wäre ${q.a}.`}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </motion.section>
+  );
 }
 
 function RaidSimulator() {
@@ -379,7 +446,6 @@ export default function RaidReferatWebseite() {
       <section className="space-y-7">{filtered.map(level => <LevelCard key={level.id} level={level} />)}</section>
       <motion.section initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.55 }} className="rounded-3xl bg-slate-950 p-8 text-white shadow-xl"><div className="flex items-center gap-3"><motion.div animate={{ rotate: 360 }} transition={{ duration: 8, repeat: Infinity, ease: "linear" }}><RefreshCcw className="h-6 w-6" /></motion.div><h2 className="text-3xl font-black">RAID 10 vs. RAID 01 – wichtiger Unterschied</h2></div><div className="mt-5 grid gap-5 md:grid-cols-2"><motion.div className="rounded-2xl bg-white/10 p-5 ring-1 ring-white/15" whileHover={{ scale: 1.04, rotate: -1 }}><h3 className="text-xl font-bold">RAID 10</h3><p className="mt-2 text-slate-300">Erst werden Platten gespiegelt, dann werden die Daten über diese Spiegel verteilt. Dadurch ist es meist robuster: Es dürfen mehrere Platten ausfallen, solange nicht beide Platten desselben Spiegelpaars betroffen sind.</p></motion.div><motion.div className="rounded-2xl bg-white/10 p-5 ring-1 ring-white/15" whileHover={{ scale: 1.04, rotate: 1 }}><h3 className="text-xl font-bold">RAID 01</h3><p className="mt-2 text-slate-300">Erst werden Daten gestriped, dann wird dieses Stripe-Set gespiegelt. Nach dem ersten Ausfall ist oft eine ganze Hälfte kritisch. Deshalb wird in der Praxis eher RAID 10 bevorzugt.</p></motion.div></div></motion.section>
       <MiniQuiz />
-      <motion.section initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.55 }} className="rounded-3xl bg-white p-8 shadow-lg ring-1 ring-slate-200"><div className="flex items-center gap-3"><motion.div animate={{ scale: [1, 1.18, 1] }} transition={{ duration: 1.8, repeat: Infinity }}><Activity className="h-6 w-6 text-blue-700" /></motion.div><h2 className="text-3xl font-black">Vorschlag für deinen Vortrag</h2></div><ol className="mt-5 space-y-3 text-slate-700"><li><b>1. Einstieg:</b> „Warum reicht eine einzelne Festplatte manchmal nicht?“</li><li><b>2. Grundlagen:</b> Striping, Mirroring und Parity erklären.</li><li><b>3. RAID-Level:</b> RAID 0 bis 7 nacheinander kurz vorstellen.</li><li><b>4. Moderne Praxis:</b> RAID 5, RAID 6 und RAID 10 hervorheben.</li><li><b>5. Fazit:</b> RAID erhöht Verfügbarkeit, ersetzt aber kein Backup.</li></ol></motion.section>
     </main>
   </div>;
 }
